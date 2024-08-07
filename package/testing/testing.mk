@@ -5,7 +5,12 @@
 ################################################################################
 
 TESTING_VERSION = intodaction
-TESTING_SITE = $(call github,KotSchrodingera7,test_peripheral,$(TESTING_VERSION))
+# TESTING_SITE = $(call github,KotSchrodingera7,test_peripheral,$(TESTING_VERSION))
+# TESTING_SITE = git@github.com:KotSchrodingera7/test_peripheral.git
+TESTING_SITE = https://github.com/KotSchrodingera7/test_peripheral.git
+TESTING_SITE_METHOD = git
+TESTING_INSTALL_STAGING = YES
+# TESTING_INSTALL_IMAGES = YES
 # TESTING_LICENSE = MIT
 # TESTING_LICENSE_FILES = LICENCE
 # TESTING_CPE_ID_VENDOR = TESTING
@@ -21,5 +26,10 @@ TESTING_SITE = $(call github,KotSchrodingera7,test_peripheral,$(TESTING_VERSION)
 # ifeq ($(BR2_STATIC_LIBS),y)
 # TESTING_CONF_OPTS += -DCMAKE_C_FLAGS="$(TARGET_CFLAGS) -DNO_LIBDL"
 # endif
+
+define TESTING_INSTALL_TARGET_CMDS
+	$(INSTALL) -D -m 0777 $(@D)/tester \
+		$(TARGET_DIR)/usr/bin/
+endef
 
 $(eval $(cmake-package))

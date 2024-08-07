@@ -5,7 +5,7 @@
 ################################################################################
 
 TESTING_VERSION = intodaction
-TESTING_SITE = $(call github,KotSchrodingera,test_peripheral,$(TESTING_VERSION))
+TESTING_SITE = $(call github,KotSchrodingera7,test_peripheral,$(TESTING_VERSION))
 # TESTING_LICENSE = MIT
 # TESTING_LICENSE_FILES = LICENCE
 # TESTING_CPE_ID_VENDOR = TESTING

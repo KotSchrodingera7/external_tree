@@ -1,5 +1,4 @@
 menuconfig BR2_PACKAGE_TESTING
 	bool "TESTING_bool"
-	depends on BR2_PACKAGE_SDL
 	help
 	  TESTING is program for testing peripheral interfaces for board of DIASOM-RK3568

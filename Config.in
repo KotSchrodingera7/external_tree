@@ -1,0 +1,1 @@
+source "$BR2_EXTERNAL_DT_PATH/package/testing/Config.in"

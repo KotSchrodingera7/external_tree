@@ -1,0 +1,4 @@
+menuconfig BR2_PACKAGE_EXPO
+	bool "EXPO_bool"
+	help
+	  Program for show on exhibition for board of DIASOM-RK3568

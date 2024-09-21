@@ -1,1 +1,3 @@
+source "$BR2_EXTERNAL_DT_PATH/package/exhibition/Config.in"
 source "$BR2_EXTERNAL_DT_PATH/package/testing/Config.in"
+

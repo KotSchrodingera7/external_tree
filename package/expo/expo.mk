@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-EXPO_VERSION = master
-EXPO_SITE = https://github.com/KotSchrodingera7/study.git
+EXPO_VERSION = expo
+EXPO_SITE = https://github.com/KotSchrodingera7/test_peripheral.git
 EXPO_SITE_METHOD = git
 EXPO_INSTALL_STAGING = YES
 

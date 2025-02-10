@@ -36,10 +36,10 @@ Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
  9 files changed, 397 insertions(+), 39 deletions(-)
 
 diff --git a/compositor/main.c b/compositor/main.c
-index 47bf540..a4f679a 100644
+index 6519aecb..dba335f8 100644
 --- a/compositor/main.c
 +++ b/compositor/main.c
-@@ -1832,6 +1832,20 @@ drm_backend_output_configure(struct weston_output *output,
+@@ -1837,6 +1837,20 @@ drm_backend_output_configure(struct weston_output *output,
  	}
  	free(s);
  
@@ -61,7 +61,7 @@ index 47bf540..a4f679a 100644
  		weston_log("Cannot configure an output using weston_drm_output_api.\n");
  		free(modeline);
 diff --git a/desktop-shell/shell.c b/desktop-shell/shell.c
-index 18bec12..8b4ed45 100644
+index a6c0be83..6f107dba 100644
 --- a/desktop-shell/shell.c
 +++ b/desktop-shell/shell.c
 @@ -4254,7 +4254,7 @@ weston_view_set_initial_position(struct weston_view *view,
@@ -73,7 +73,7 @@ index 18bec12..8b4ed45 100644
  	struct weston_seat *seat;
  	pixman_rectangle32_t area;
  
-@@ -4279,16 +4279,20 @@ weston_view_set_initial_position(struct weston_view *view,
+@@ -4273,16 +4273,20 @@ weston_view_set_initial_position(struct weston_view *view,
  		}
  	}
  
@@ -98,7 +98,7 @@ index 18bec12..8b4ed45 100644
  	if (!target_output) {
  		weston_view_set_position(view, 10 + random() % 400,
  					 10 + random() % 400);
-@@ -4890,6 +4894,41 @@ shell_resize_surface_to_output(struct desktop_shell *shell,
+@@ -4884,6 +4888,41 @@ shell_resize_surface_to_output(struct desktop_shell *shell,
  					output->height);
  }
  
@@ -140,7 +140,7 @@ index 18bec12..8b4ed45 100644
  
  static void
  handle_output_resized(struct wl_listener *listener, void *data)
-@@ -4899,8 +4938,13 @@ handle_output_resized(struct wl_listener *listener, void *data)
+@@ -4893,8 +4932,13 @@ handle_output_resized(struct wl_listener *listener, void *data)
  	struct weston_output *output = (struct weston_output *)data;
  	struct shell_output *sh_output = find_shell_output_from_weston_output(shell, output);
  
@@ -154,7 +154,7 @@ index 18bec12..8b4ed45 100644
  }
  
  static void
-@@ -4949,7 +4993,9 @@ handle_output_move_layer(struct desktop_shell *shell,
+@@ -4943,7 +4987,9 @@ handle_output_move_layer(struct desktop_shell *shell,
  
  		x = view->geometry.x + output->move_x;
  		y = view->geometry.y + output->move_y;
@@ -166,7 +166,7 @@ index 18bec12..8b4ed45 100644
  }
  
 diff --git a/include/libweston/libweston.h b/include/libweston/libweston.h
-index 8868622..24e44a2 100644
+index ee3d35c0..8f430b31 100644
 --- a/include/libweston/libweston.h
 +++ b/include/libweston/libweston.h
 @@ -413,6 +413,12 @@ struct weston_output {
@@ -191,7 +191,7 @@ index 8868622..24e44a2 100644
  
  struct weston_buffer {
 diff --git a/libweston/backend-drm/drm-internal.h b/libweston/backend-drm/drm-internal.h
-index 1625be2..9d24017 100644
+index 1625be21..9d240174 100644
 --- a/libweston/backend-drm/drm-internal.h
 +++ b/libweston/backend-drm/drm-internal.h
 @@ -115,6 +115,9 @@
@@ -239,7 +239,7 @@ index 1625be2..9d24017 100644
  drm_output_set_mode(struct weston_output *base,
  		    enum weston_drm_backend_output_mode mode,
 diff --git a/libweston/backend-drm/drm.c b/libweston/backend-drm/drm.c
-index 696df68..1d6f7db 100644
+index d35eeef7..fbe158bd 100644
 --- a/libweston/backend-drm/drm.c
 +++ b/libweston/backend-drm/drm.c
 @@ -40,6 +40,7 @@
@@ -268,7 +268,7 @@ index 696df68..1d6f7db 100644
  
  	if (!b->primary_head)
  		return;
-@@ -493,6 +496,12 @@ drm_output_update_complete(struct drm_output *output, uint32_t flags,
+@@ -491,6 +494,12 @@ drm_output_update_complete(struct drm_output *output, uint32_t flags,
  		return;
  	}
  
@@ -281,7 +281,7 @@ index 696df68..1d6f7db 100644
  	ts.tv_sec = sec;
  	ts.tv_nsec = usec * 1000;
  
-@@ -671,8 +680,8 @@ out:
+@@ -669,8 +678,8 @@ out:
  		return;
  	}
  
@@ -292,7 +292,7 @@ index 696df68..1d6f7db 100644
  
  	dx = output->plane_bounds.x1;
  	dy = output->plane_bounds.y1;
-@@ -823,7 +832,8 @@ drm_output_repaint(struct weston_output *output_base,
+@@ -821,7 +830,8 @@ drm_output_repaint(struct weston_output *output_base,
  
  	weston_compositor_read_presentation_clock(b->compositor, &now);
  	now_ms = timespec_to_msec(&now);
@@ -302,7 +302,7 @@ index 696df68..1d6f7db 100644
  		/* Resize fullscreen/maxmium views(not always success) */
  		if (now_ms < b->last_resize_ms + DRM_RESIZE_FREEZE_MS)
  			wl_signal_emit(&b->compositor->output_resized_signal,
-@@ -832,7 +842,7 @@ drm_output_repaint(struct weston_output *output_base,
+@@ -830,7 +840,7 @@ drm_output_repaint(struct weston_output *output_base,
  		weston_output_damage(output_base);
  		weston_output_finish_frame(output_base, NULL,
  					   WP_PRESENTATION_FEEDBACK_INVALID);
@@ -311,7 +311,7 @@ index 696df68..1d6f7db 100644
  	}
  
  	/* If planes have been disabled in the core, we might not have
-@@ -860,7 +870,8 @@ drm_output_repaint(struct weston_output *output_base,
+@@ -858,7 +868,8 @@ drm_output_repaint(struct weston_output *output_base,
  
  err:
  	drm_output_state_free(state);
@@ -321,7 +321,7 @@ index 696df68..1d6f7db 100644
  }
  
  /* Determine the type of vblank synchronization to use for the output.
-@@ -2213,6 +2224,8 @@ drm_output_enable(struct weston_output *base)
+@@ -2195,6 +2206,8 @@ drm_output_enable(struct weston_output *base)
  	output->base.switch_mode = drm_output_switch_mode;
  	output->base.set_gamma = drm_output_set_gamma;
  
@@ -330,7 +330,7 @@ index 696df68..1d6f7db 100644
  	output->state_invalid = true;
  
  	weston_log("Output %s (crtc %d) video modes:\n",
-@@ -3061,6 +3074,7 @@ drm_destroy(struct weston_compositor *ec)
+@@ -3043,6 +3056,7 @@ drm_destroy(struct weston_compositor *ec)
  
  	udev_input_destroy(&b->input);
  
@@ -338,7 +338,7 @@ index 696df68..1d6f7db 100644
  	wl_event_source_remove(b->hotplug_timer);
  	wl_event_source_remove(b->udev_drm_source);
  	wl_event_source_remove(b->drm_source);
-@@ -3483,6 +3497,10 @@ output_create_notify(struct wl_listener *listener, void *data)
+@@ -3465,6 +3479,10 @@ output_create_notify(struct wl_listener *listener, void *data)
  					     output_create_listener);
  
  	drm_backend_update_outputs(b);
@@ -349,7 +349,7 @@ index 696df68..1d6f7db 100644
  }
  
  static const struct weston_drm_output_api api = {
-@@ -3491,6 +3509,236 @@ static const struct weston_drm_output_api api = {
+@@ -3473,6 +3491,236 @@ static const struct weston_drm_output_api api = {
  	drm_output_set_seat,
  };
  
@@ -586,7 +586,7 @@ index 696df68..1d6f7db 100644
  enum drm_head_mode {
  	DRM_HEAD_MODE_DEFAULT,
  	DRM_HEAD_MODE_PRIMARY,
-@@ -3830,6 +4078,10 @@ drm_backend_create(struct weston_compositor *compositor,
+@@ -3812,6 +4060,10 @@ drm_backend_create(struct weston_compositor *compositor,
  	b->hotplug_timer =
  		wl_event_loop_add_timer(loop, hotplug_timer_handler, b);
  
@@ -598,7 +598,7 @@ index 696df68..1d6f7db 100644
  
  err_udev_monitor:
 diff --git a/libweston/backend-drm/modes.c b/libweston/backend-drm/modes.c
-index e7bbfa5..ff7421d 100644
+index e7bbfa53..ff7421da 100644
 --- a/libweston/backend-drm/modes.c
 +++ b/libweston/backend-drm/modes.c
 @@ -385,15 +385,19 @@ drm_output_add_mode(struct drm_output *output, const drmModeModeInfo *info)
@@ -647,10 +647,10 @@ index e7bbfa5..ff7421d 100644
  			if (!backend->aspect_ratio_supported ||
  			    aspect_ratio == drm_mode->base.aspect_ratio)
 diff --git a/libweston/compositor.c b/libweston/compositor.c
-index 7680445..0aa9d1a 100644
+index 7053ab68..dbf7d945 100644
 --- a/libweston/compositor.c
 +++ b/libweston/compositor.c
-@@ -3009,6 +3009,11 @@ weston_output_repaint(struct weston_output *output, void *repaint_data)
+@@ -3005,6 +3005,11 @@ weston_output_repaint(struct weston_output *output, void *repaint_data)
  static void
  weston_output_schedule_repaint_reset(struct weston_output *output)
  {
@@ -662,7 +662,7 @@ index 7680445..0aa9d1a 100644
  	output->repaint_status = REPAINT_NOT_SCHEDULED;
  	TL_POINT(output->compositor, "core_repaint_exit_loop",
  		 TLP_OUTPUT(output), TLP_END);
-@@ -3022,6 +3027,11 @@ weston_output_maybe_repaint(struct weston_output *output, struct timespec *now,
+@@ -3018,6 +3023,11 @@ weston_output_maybe_repaint(struct weston_output *output, struct timespec *now,
  	int ret = 0;
  	int64_t msec_to_repaint;
  
@@ -674,7 +674,7 @@ index 7680445..0aa9d1a 100644
  	/* We're not ready yet; come back to make a decision later. */
  	if (output->repaint_status != REPAINT_SCHEDULED)
  		return ret;
-@@ -3048,11 +3058,11 @@ weston_output_maybe_repaint(struct weston_output *output, struct timespec *now,
+@@ -3044,11 +3054,11 @@ weston_output_maybe_repaint(struct weston_output *output, struct timespec *now,
  	 * output. */
  	ret = weston_output_repaint(output, repaint_data);
  	weston_compositor_read_presentation_clock(compositor, now);
@@ -689,16 +689,16 @@ index 7680445..0aa9d1a 100644
  
  err:
  	weston_output_schedule_repaint_reset(output);
-@@ -3105,7 +3115,7 @@ output_repaint_timer_handler(void *data)
+@@ -3101,7 +3111,7 @@ output_repaint_timer_handler(void *data)
  	struct weston_output *output;
  	struct timespec now;
  	void *repaint_data = NULL;
 -	int ret = 0;
 +	int ret = 0, repainted = 0;
  
- 	if (!access(getenv("WESTON_FREEZE_DISPLAY") ? : "", F_OK)) {
- 		usleep(DEFAULT_REPAINT_WINDOW * 1000);
-@@ -3122,9 +3132,11 @@ output_repaint_timer_handler(void *data)
+ 	weston_compositor_read_presentation_clock(compositor, &now);
+ 	compositor->last_repaint_start = now;
+@@ -3113,9 +3123,11 @@ output_repaint_timer_handler(void *data)
  		ret = weston_output_maybe_repaint(output, &now, repaint_data);
  		if (ret)
  			break;
@@ -711,7 +711,7 @@ index 7680445..0aa9d1a 100644
  		if (compositor->backend->repaint_flush)
  			ret = compositor->backend->repaint_flush(compositor,
  							 repaint_data);
-@@ -6099,7 +6111,7 @@ weston_compositor_reflow_outputs(struct weston_compositor *compositor)
+@@ -6061,7 +6073,7 @@ weston_compositor_reflow_outputs(struct weston_compositor *compositor)
  		wl_list_for_each(head, &output->head_list, output_link)
  			weston_head_update_global(head);
  
@@ -720,7 +720,7 @@ index 7680445..0aa9d1a 100644
  			continue;
  
  		x = next_x;
-@@ -6546,6 +6558,9 @@ weston_output_set_transform(struct weston_output *output,
+@@ -6508,6 +6520,9 @@ weston_output_set_transform(struct weston_output *output,
  
  	weston_compositor_reflow_outputs(output->compositor);
  
@@ -730,7 +730,7 @@ index 7680445..0aa9d1a 100644
  	/* Notify clients of the change for output transform. */
  	wl_list_for_each(head, &output->head_list, output_link) {
  		wl_resource_for_each(resource, &head->resource_list) {
-@@ -6678,6 +6693,8 @@ weston_output_init(struct weston_output *output,
+@@ -6640,6 +6655,8 @@ weston_output_init(struct weston_output *output,
  	/* Can't use -1 on uint32_t and 0 is valid enum value */
  	output->transform = UINT32_MAX;
  
@@ -739,7 +739,7 @@ index 7680445..0aa9d1a 100644
  	pixman_region32_init(&output->region);
  	wl_list_init(&output->mode_list);
  }
-@@ -6769,11 +6786,8 @@ weston_output_create_heads_string(struct weston_output *output)
+@@ -6731,11 +6748,8 @@ weston_output_create_heads_string(struct weston_output *output)
  WL_EXPORT int
  weston_output_enable(struct weston_output *output)
  {
@@ -751,7 +751,7 @@ index 7680445..0aa9d1a 100644
  
  	if (output->enabled) {
  		weston_log("Error: attempt to enable an enabled output '%s'\n",
-@@ -6798,20 +6812,17 @@ weston_output_enable(struct weston_output *output)
+@@ -6760,20 +6774,17 @@ weston_output_enable(struct weston_output *output)
  		assert(head->model);
  	}
  
@@ -777,7 +777,7 @@ index 7680445..0aa9d1a 100644
  	output->original_scale = output->scale;
  
  	wl_signal_init(&output->frame_signal);
-@@ -6820,8 +6831,7 @@ weston_output_enable(struct weston_output *output)
+@@ -6782,8 +6793,7 @@ weston_output_enable(struct weston_output *output)
  	weston_output_transform_scale_init(output, output->transform, output->scale);
  	weston_output_init_zoom(output);
  
@@ -787,7 +787,7 @@ index 7680445..0aa9d1a 100644
  
  	wl_list_init(&output->animation_list);
  	wl_list_init(&output->feedback_list);
-@@ -6848,6 +6858,8 @@ weston_output_enable(struct weston_output *output)
+@@ -6810,6 +6820,8 @@ weston_output_enable(struct weston_output *output)
  		   output->name, head_names);
  	free(head_names);
  
@@ -797,7 +797,7 @@ index 7680445..0aa9d1a 100644
  }
  
 diff --git a/libweston/pixman-renderer.c b/libweston/pixman-renderer.c
-index 754adce..d7182e7 100644
+index 754adce2..d7182e7f 100644
 --- a/libweston/pixman-renderer.c
 +++ b/libweston/pixman-renderer.c
 @@ -158,6 +158,9 @@ pixman_renderer_compute_transform(pixman_transform_t *transform_out,
@@ -811,10 +811,10 @@ index 754adce..d7182e7 100644
  		weston_matrix_multiply(&matrix, &ev->transform.inverse);
  	} else {
 diff --git a/libweston/renderer-gl/gl-renderer.c b/libweston/renderer-gl/gl-renderer.c
-index 6e04baa..f853149 100644
+index a5f5eae4..933973b7 100644
 --- a/libweston/renderer-gl/gl-renderer.c
 +++ b/libweston/renderer-gl/gl-renderer.c
-@@ -1720,6 +1720,10 @@ gl_renderer_repaint_output(struct weston_output *output,
+@@ -1649,6 +1649,10 @@ gl_renderer_repaint_output(struct weston_output *output,
  
  	/* Calculate the global GL matrix */
  	go->output_matrix = output->matrix;
@@ -825,6 +825,3 @@ index 6e04baa..f853149 100644
  	weston_matrix_translate(&go->output_matrix,
  				-(output->current_mode->width / 2.0),
  				-(output->current_mode->height / 2.0), 0);
--- 
-2.20.1
-

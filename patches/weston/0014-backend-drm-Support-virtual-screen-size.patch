@@ -15,7 +15,7 @@ Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
  4 files changed, 162 insertions(+), 26 deletions(-)
 
 diff --git a/libweston/backend-drm/drm-internal.h b/libweston/backend-drm/drm-internal.h
-index 3f42a25..996f587 100644
+index 3f42a25a..996f5872 100644
 --- a/libweston/backend-drm/drm-internal.h
 +++ b/libweston/backend-drm/drm-internal.h
 @@ -166,6 +166,7 @@ enum wdrm_plane_property {
@@ -91,12 +91,12 @@ index 3f42a25..996f587 100644
  drm_property_get_range_values(struct drm_property_info *info,
  			      const drmModeObjectProperties *props);
 diff --git a/libweston/backend-drm/drm.c b/libweston/backend-drm/drm.c
-index 4e00933..1c839c5 100644
+index 83a70234..7ac2687d 100644
 --- a/libweston/backend-drm/drm.c
 +++ b/libweston/backend-drm/drm.c
-@@ -324,6 +324,11 @@ drm_output_update_complete(struct drm_output *output, uint32_t flags,
- 		output->state_last = NULL;
- 	}
+@@ -322,6 +322,11 @@ drm_output_update_complete(struct drm_output *output, uint32_t flags,
+ 	drm_output_state_free(output->state_last);
+ 	output->state_last = NULL;
  
 +	if (output->fb_dummy) {
 +		drm_fb_unref(output->fb_dummy);
@@ -106,7 +106,7 @@ index 4e00933..1c839c5 100644
  	if (output->destroy_pending) {
  		output->destroy_pending = false;
  		output->disable_pending = false;
-@@ -397,6 +402,7 @@ drm_output_render(struct drm_output_state *state, pixman_region32_t *damage)
+@@ -395,6 +400,7 @@ drm_output_render(struct drm_output_state *state, pixman_region32_t *damage)
  	struct drm_property_info *damage_info =
  		&scanout_plane->props[WDRM_PLANE_FB_DAMAGE_CLIPS];
  	struct drm_backend *b = to_drm_backend(c);
@@ -114,7 +114,7 @@ index 4e00933..1c839c5 100644
  	struct drm_fb *fb;
  	pixman_region32_t scanout_damage;
  	pixman_box32_t *rects;
-@@ -440,10 +446,11 @@ drm_output_render(struct drm_output_state *state, pixman_region32_t *damage)
+@@ -438,10 +444,11 @@ drm_output_render(struct drm_output_state *state, pixman_region32_t *damage)
  	scanout_state->src_w = fb->width << 16;
  	scanout_state->src_h = fb->height << 16;
  
@@ -128,7 +128,7 @@ index 4e00933..1c839c5 100644
  
  	pixman_region32_subtract(&c->primary_plane.damage,
  				 &c->primary_plane.damage, damage);
-@@ -516,7 +523,7 @@ drm_output_repaint(struct weston_output *output_base,
+@@ -514,7 +521,7 @@ drm_output_repaint(struct weston_output *output_base,
  
  	weston_compositor_read_presentation_clock(b->compositor, &now);
  	now_ms = timespec_to_msec(&now);
@@ -137,7 +137,7 @@ index 4e00933..1c839c5 100644
  		/* Resize fullscreen/maxmium views(not always success) */
  		if (now_ms < b->last_resize_ms + DRM_RESIZE_FREEZE_MS)
  			wl_signal_emit(&b->compositor->output_resized_signal,
-@@ -852,6 +859,11 @@ drm_plane_create(struct drm_backend *b, const drmModePlane *kplane)
+@@ -850,6 +857,11 @@ drm_plane_create(struct drm_backend *b, const drmModePlane *kplane)
  				       props,
  				       WDRM_PLANE_TYPE__COUNT);
  
@@ -149,7 +149,7 @@ index 4e00933..1c839c5 100644
  	zpos_range_values =
  		drm_property_get_range_values(&plane->props[WDRM_PLANE_ZPOS],
  					      props);
-@@ -3298,6 +3310,16 @@ drm_backend_create(struct weston_compositor *compositor,
+@@ -3280,6 +3292,16 @@ drm_backend_create(struct weston_compositor *compositor,
  
  	b->head_matches = drm_head_matches[head_mode];
  
@@ -167,10 +167,10 @@ index 4e00933..1c839c5 100644
  	b->drm.fd = -1;
  
 diff --git a/libweston/backend-drm/kms.c b/libweston/backend-drm/kms.c
-index 4426af4..1fcbdeb 100644
+index 075b8946..7284588e 100644
 --- a/libweston/backend-drm/kms.c
 +++ b/libweston/backend-drm/kms.c
-@@ -56,6 +56,15 @@ struct drm_property_enum_info plane_type_enums[] = {
+@@ -54,6 +54,15 @@ struct drm_property_enum_info plane_type_enums[] = {
  	},
  };
  
@@ -186,7 +186,7 @@ index 4426af4..1fcbdeb 100644
  const struct drm_property_info plane_props[] = {
  	[WDRM_PLANE_TYPE] = {
  		.name = "type",
-@@ -76,6 +85,11 @@ const struct drm_property_info plane_props[] = {
+@@ -74,6 +83,11 @@ const struct drm_property_info plane_props[] = {
  	[WDRM_PLANE_IN_FENCE_FD] = { .name = "IN_FENCE_FD" },
  	[WDRM_PLANE_FB_DAMAGE_CLIPS] = { .name = "FB_DAMAGE_CLIPS" },
  	[WDRM_PLANE_ZPOS] = { .name = "zpos" },
@@ -198,7 +198,7 @@ index 4426af4..1fcbdeb 100644
  };
  
  struct drm_property_enum_info dpms_state_enums[] = {
-@@ -213,6 +227,31 @@ drm_property_get_value(struct drm_property_info *info,
+@@ -211,6 +225,31 @@ drm_property_get_value(struct drm_property_info *info,
  	return def;
  }
  
@@ -230,7 +230,7 @@ index 4426af4..1fcbdeb 100644
  /**
   * Get the current range values of a KMS property
   *
-@@ -333,9 +372,11 @@ drm_property_info_populate(struct drm_backend *b,
+@@ -331,9 +370,11 @@ drm_property_info_populate(struct drm_backend *b,
  		}
  
  		if (info[j].num_enum_values == 0 &&
@@ -244,7 +244,7 @@ index 4426af4..1fcbdeb 100644
  			drmModeFreeProperty(prop);
  			continue;
  		}
-@@ -356,9 +397,11 @@ drm_property_info_populate(struct drm_backend *b,
+@@ -354,9 +395,11 @@ drm_property_info_populate(struct drm_backend *b,
  			continue;
  		}
  
@@ -259,7 +259,7 @@ index 4426af4..1fcbdeb 100644
  			drmModeFreeProperty(prop);
  			info[j].prop_id = 0;
  			continue;
-@@ -660,6 +703,7 @@ drm_output_apply_state_legacy(struct drm_output_state *state)
+@@ -658,6 +701,7 @@ drm_output_apply_state_legacy(struct drm_output_state *state)
  	int n_conn = 0;
  	struct timespec now;
  	int ret = 0;
@@ -267,7 +267,7 @@ index 4426af4..1fcbdeb 100644
  
  	wl_list_for_each(head, &output->base.head_list, base.output_link) {
  		assert(n_conn < MAX_CLONED_CONNECTORS);
-@@ -707,30 +751,36 @@ drm_output_apply_state_legacy(struct drm_output_state *state)
+@@ -705,30 +749,36 @@ drm_output_apply_state_legacy(struct drm_output_state *state)
  	if (!scanout_state || !scanout_state->fb)
  		return 0;
  
@@ -321,7 +321,7 @@ index 4426af4..1fcbdeb 100644
  				     connectors, n_conn,
  				     &mode->mode_info);
  		if (ret) {
-@@ -741,6 +791,27 @@ drm_output_apply_state_legacy(struct drm_output_state *state)
+@@ -739,6 +789,27 @@ drm_output_apply_state_legacy(struct drm_output_state *state)
  		output->state_invalid = false;
  	}
  
@@ -350,7 +350,7 @@ index 4426af4..1fcbdeb 100644
  	drm_debug(backend, "\t[CRTC:%u, PLANE:%u] FORMAT: %s\n",
  			   crtc->crtc_id, scanout_state->plane->plane_id,
 diff --git a/libweston/backend-drm/modes.c b/libweston/backend-drm/modes.c
-index a071375..e7bbfa5 100644
+index a071375b..e7bbfa53 100644
 --- a/libweston/backend-drm/modes.c
 +++ b/libweston/backend-drm/modes.c
 @@ -378,6 +378,7 @@ drm_refresh_rate_mHz(const drmModeModeInfo *info)
@@ -409,6 +409,3 @@ index a071375..e7bbfa5 100644
  }
  
  
--- 
-2.20.1
-

@@ -9,6 +9,7 @@ BR2_INIT_SYSTEMD=y
 BR2_SYSTEM_DEFAULT_PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
 BR2_ENABLE_LOCALE_WHITELIST="C.UTF-8"
 BR2_GENERATE_LOCALE="C.UTF-8"
+BR2_ROOTFS_OVERLAY="$(BR2_EXTERNAL_DT_PATH)/board/diasom/rk3588_b2b_evb/fs-overlay/"
 BR2_ROOTFS_POST_BUILD_SCRIPT="$(BR2_EXTERNAL_DT_PATH)/board/diasom/rk3588_b2b_evb/post-build.sh"
 BR2_ROOTFS_POST_IMAGE_SCRIPT="support/scripts/genimage.sh"
 BR2_ROOTFS_POST_SCRIPT_ARGS="-c $(BR2_EXTERNAL_DT_PATH)/board/diasom/rk3588_b2b_evb/genimage.cfg"

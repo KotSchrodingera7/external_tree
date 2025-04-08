@@ -1,0 +1,12 @@
+[Unit]
+Description=Local
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/bin/run-parts -a start /etc/init.d/
+ExecStop=/bin/run-parts -a stop /etc/init.d/
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target

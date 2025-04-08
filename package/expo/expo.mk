@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EXPO_VERSION = expo
+EXPO_VERSION = 2d8a143
 EXPO_SITE = https://github.com/KotSchrodingera7/test_peripheral.git
 EXPO_SITE_METHOD = git
 EXPO_INSTALL_STAGING = YES

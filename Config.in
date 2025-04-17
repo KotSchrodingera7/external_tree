@@ -1,5 +1,4 @@
 source "$BR2_EXTERNAL_DT_PATH/package/expo/Config.in"
-source "$BR2_EXTERNAL_DT_PATH/package/gstreamer1-rockchip/Config.in"
-source "$BR2_EXTERNAL_DT_PATH/package/rockchip-mpp/Config.in"
+source "$BR2_EXTERNAL_DT_PATH/package/rockchip/Config.in"
 source "$BR2_EXTERNAL_DT_PATH/package/testing/Config.in"
 

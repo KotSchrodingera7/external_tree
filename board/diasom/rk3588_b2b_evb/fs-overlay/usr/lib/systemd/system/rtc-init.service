@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize RTC without battery
+DefaultDependencies=no
+After=dev-rtc0.device
+Before=time-sync.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'hwclock -w'
+
+[Install]
+WantedBy=multi-user.target

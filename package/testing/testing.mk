@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TESTING_VERSION = bd49fed
+TESTING_VERSION = 329fea1
 TESTING_SITE = https://github.com/KotSchrodingera7/test_peripheral.git
 TESTING_SITE_METHOD = git
 TESTING_INSTALL_STAGING = YES

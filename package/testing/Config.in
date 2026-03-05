@@ -1,4 +1,36 @@
-menuconfig BR2_PACKAGE_TESTING
-	bool "TESTING_bool"
+config BR2_PACKAGE_TESTING
+	bool "testing hardware peripheral tester"
 	help
-	  TESTING is program for testing peripheral interfaces for board of DIASOM-RK3568
+	  Hardware test application for Diasom RK SoCs (rk3568, rk3588).
+	  Provides CLI and Qt/QML GUI runners for board bring-up tests
+	  (CAN, GPIO, UART, filesystem, camera, etc.).
+
+if BR2_PACKAGE_TESTING
+
+choice
+	prompt "Target SoC for testing GUI/config"
+	default BR2_PACKAGE_TESTING_SOC_RK3568
+
+config BR2_PACKAGE_TESTING_SOC_RK3568
+	bool "rk3568"
+
+config BR2_PACKAGE_TESTING_SOC_RK3588
+	bool "rk3588"
+
+endchoice
+
+comment "Runtime dependencies (enable in Buildroot menuconfig)"
+
+comment "Qt5 / graphics"
+comment "  BR2_PACKAGE_QT5"
+comment "  BR2_PACKAGE_QT5DECLARATIVE"
+
+comment "Multimedia"
+comment "  BR2_PACKAGE_GSTREAMER1"
+comment "  BR2_PACKAGE_GSTREAMER1_PLUGINS_BASE"
+
+comment "Logging / GPIO"
+comment "  BR2_PACKAGE_SPDLOG"
+comment "  BR2_PACKAGE_LIBGPIODCXX"
+
+endif

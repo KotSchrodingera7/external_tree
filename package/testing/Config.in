@@ -22,15 +22,15 @@ endchoice
 comment "Runtime dependencies (enable in Buildroot menuconfig)"
 
 comment "Qt5 / graphics"
-comment "  BR2_PACKAGE_QT5"
-comment "  BR2_PACKAGE_QT5DECLARATIVE"
+comment "BR2_PACKAGE_QT5"
+comment "BR2_PACKAGE_QT5DECLARATIVE"
 
 comment "Multimedia"
-comment "  BR2_PACKAGE_GSTREAMER1"
-comment "  BR2_PACKAGE_GSTREAMER1_PLUGINS_BASE"
+comment "BR2_PACKAGE_GSTREAMER1"
+comment "BR2_PACKAGE_GSTREAMER1_PLUGINS_BASE"
 
 comment "Logging / GPIO"
-comment "  BR2_PACKAGE_SPDLOG"
-comment "  BR2_PACKAGE_LIBGPIODCXX"
+comment "BR2_PACKAGE_SPDLOG"
+comment "BR2_PACKAGE_LIBGPIODCXX"
 
 endif

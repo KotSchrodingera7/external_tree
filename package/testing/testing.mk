@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TESTING_VERSION = 90c356c
+TESTING_VERSION = 7164022
 TESTING_SITE = https://gitlab.macrogroup.ru/diasom/test_peripheral.git
 TESTING_SITE_METHOD = git
 TESTING_INSTALL_STAGING = YES
@@ -38,7 +38,7 @@ define TESTING_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 0755 $(@D)/scripts/* $(TARGET_DIR)/usr/local/bin
 	$(INSTALL) -D -m 0755 $(@D)/configs/config.cfg $(TARGET_DIR)/usr/local/share
 	$(INSTALL) -D -m 0755 $(@D)/scripts/select_board_cfg.sh $(TARGET_DIR)/usr/bin/select_board_cfg.sh
-	$(INSTALL) -D -m 0644 $(@D)/systemd/tester.service $(TARGET_DIR)/usr/lib/systemd/system/tester.service
+	$(INSTALL) -D -m 0644 $(@D)/systemd/tester_$(TESTING_SOC).service $(TARGET_DIR)/usr/lib/systemd/system/tester.service
 
 	$(INSTALL) -D $(@D)/configs/board_rk3568.json $(TARGET_DIR)/root/board_rk3568.json
 	$(INSTALL) -D $(@D)/configs/board_rk3588.json $(TARGET_DIR)/root/board_rk3588.json

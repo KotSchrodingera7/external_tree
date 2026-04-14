@@ -1,0 +1,23 @@
+diff --git a/package/diasom/rockchip/camera-engine-rkaiq/camera-engine-rkaiq.hash b/package/diasom/rockchip/camera-engine-rkaiq/camera-engine-rkaiq.hash
+index 6af90f6c67..c986c34593 100644
+--- a/package/diasom/rockchip/camera-engine-rkaiq/camera-engine-rkaiq.hash
++++ b/package/diasom/rockchip/camera-engine-rkaiq/camera-engine-rkaiq.hash
+@@ -1,2 +1,2 @@
+ sha256  38751245389e1e23f73e6f5384b5cbe7fa972cc4410c5adc9c04b082a0b9561a  NOTICE
+-sha256  0b991bce87d18811db3da6d35206a4af07c1264172586b6aa35c6d40ebb06fd5  camera-engine-rkaiq-77f10089-git4.tar.gz
++sha256  9e400bfa0c8e445609afa1b0955ede75f91634a88b65a3a6caed5819e4cc7e9a  camera-engine-rkaiq-rkaiq-2024_04_08-git4.tar.gz
+diff --git a/package/diasom/rockchip/camera-engine-rkaiq/camera-engine-rkaiq.mk b/package/diasom/rockchip/camera-engine-rkaiq/camera-engine-rkaiq.mk
+index b8f5545660..187cb2449e 100644
+--- a/package/diasom/rockchip/camera-engine-rkaiq/camera-engine-rkaiq.mk
++++ b/package/diasom/rockchip/camera-engine-rkaiq/camera-engine-rkaiq.mk
+@@ -4,8 +4,8 @@
+ #
+ ################################################################################
+ 
+-CAMERA_ENGINE_RKAIQ_VERSION = 77f10089
+-CAMERA_ENGINE_RKAIQ_SITE = https://gitlab.com/firefly-linux/external/camera_engine_rkaiq.git
++CAMERA_ENGINE_RKAIQ_VERSION = rkaiq-2024_04_08
++CAMERA_ENGINE_RKAIQ_SITE = https://github.com/JeffyCN/mirrors.git
+ CAMERA_ENGINE_RKAIQ_SITE_METHOD = git
+ CAMERA_ENGINE_RKAIQ_INSTALL_STAGING = YES
+ 

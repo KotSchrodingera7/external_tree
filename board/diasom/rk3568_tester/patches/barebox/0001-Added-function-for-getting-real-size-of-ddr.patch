@@ -1,0 +1,76 @@
+diff --git a/arch/arm/boards/diasom-rk3568/board.c b/arch/arm/boards/diasom-rk3568/board.c
+index 6b9e054cb4..3a685ae482 100644
+--- a/arch/arm/boards/diasom-rk3568/board.c
++++ b/arch/arm/boards/diasom-rk3568/board.c
+@@ -12,9 +12,37 @@
+ #include <i2c/i2c.h>
+ #include <linux/nvmem-consumer.h>
+ #include <mach/rockchip/bbu.h>
++#include <mach/rockchip/dmc.h>
++#include <mach/rockchip/rk3568-regs.h>
++
++#define RK3568_PMUGRF_OS_REG2           0x208
++#define RK3568_PMUGRF_OS_REG3           0x20c
+ 
+ static int module_revision = -1;
+ 
++static u64 rk3568_real_ddr_size(void)
++{
++	void __iomem *pmugrf = IOMEM(RK3568_PMUGRF_BASE);
++	u32 sys_reg2 = readl(pmugrf + RK3568_PMUGRF_OS_REG2);
++	u32 sys_reg3 = readl(pmugrf + RK3568_PMUGRF_OS_REG3);
++
++	return rockchip_sdram_size(sys_reg2, sys_reg3);
++}
++
++static int diasom_fixup_real_ddr(struct device_node *root, void *ctx)
++{
++	struct device_node *chosen;
++	u64 ddr = rk3568_real_ddr_size();
++	__be64 val = cpu_to_be64(ddr);
++
++	chosen = of_create_node(root, "/chosen");
++	if (!chosen)
++		return -ENOMEM;
++
++	return of_set_property(chosen, "diasom,real-ddr-size",
++			       &val, sizeof(val), true);
++}
++
+ static int diasom_rk3568_probe_i2c(struct i2c_adapter *adapter, const int addr)
+ {
+ 	u8 buf[1];
+@@ -343,6 +371,8 @@ static int __init diasom_rk3568_init(void)
+ 	bool do_probe = false;
+ 	int ret = 0;
+ 
++	of_register_fixup(diasom_fixup_real_ddr, NULL);
++
+ 	if (of_machine_is_compatible("rockchip,rk3568")) {
+ 		struct device_node *otp = of_find_node_by_name_address(NULL, "nvmem@fe38c000");
+ 		char ver = 0;
+diff --git a/arch/arm/mach-rockchip/dmc.c b/arch/arm/mach-rockchip/dmc.c
+index 8502859f4b..64ce051459 100644
+--- a/arch/arm/mach-rockchip/dmc.c
++++ b/arch/arm/mach-rockchip/dmc.c
+@@ -53,7 +53,7 @@ struct rockchip_dmc_drvdata {
+ 	resource_size_t membase;
+ };
+ 
+-static resource_size_t rockchip_sdram_size(u32 sys_reg2, u32 sys_reg3)
++resource_size_t rockchip_sdram_size(u32 sys_reg2, u32 sys_reg3)
+ {
+ 	u32 rank, cs0_col, bk, cs0_row, cs1_row, bw, row_3_4;
+ 	resource_size_t chipsize_mb, size_mb = 0;
+diff --git a/include/mach/rockchip/dmc.h b/include/mach/rockchip/dmc.h
+index ddcf989a30..244a049ae6 100644
+--- a/include/mach/rockchip/dmc.h
++++ b/include/mach/rockchip/dmc.h
+@@ -83,6 +83,7 @@ enum {
+ #define SYS_REG_CS1_COL_SHIFT(ch)		(0 + (ch) * 2)
+ #define SYS_REG_CS1_COL_MASK			3
+ 
++resource_size_t rockchip_sdram_size(u32 sys_reg2, u32 sys_reg3);
+ resource_size_t rk3399_ram0_size(void);
+ resource_size_t rk3562_ram0_size(void);
+ resource_size_t rk3568_ram0_size(void);

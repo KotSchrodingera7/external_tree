@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TESTING_VERSION = 191bc6d
+TESTING_VERSION = bd04a00
 TESTING_SITE = https://gitlab.macrogroup.ru/diasom/test_peripheral.git
 TESTING_SITE_METHOD = git
 TESTING_INSTALL_STAGING = YES
@@ -43,6 +43,7 @@ define TESTING_INSTALL_TARGET_CMDS
 	$(INSTALL) -D $(@D)/configs/board_rk3568.json $(TARGET_DIR)/root/board_rk3568.json
 	$(INSTALL) -D $(@D)/configs/board_rk3588.json $(TARGET_DIR)/root/board_rk3588.json
 	$(INSTALL) -D $(@D)/configs/board_rk3588_hat.json $(TARGET_DIR)/root/board_rk3588_hat.json
+	$(INSTALL) -D $(@D)/configs/board_rk3588_smark.json $(TARGET_DIR)/root/board_rk3588_smark.json
 
 	if [ "$(TESTING_SOC)" = "rk3568" ]; then \
 		ln -sf /root/board_rk3568.json $(TARGET_DIR)/root/board.cfg; \

@@ -31,7 +31,7 @@ Before=graphical.target
 # Requires systemd-notify.so Weston plugin.
 Type=notify
 EnvironmentFile=/etc/default/weston
-Environment=XDG_RUNTIME_DIR=/run/weston
+Environment=XDG_RUNTIME_DIR=/run/weston WESTON_FORCE_RENDERER=1
 ExecStart=/usr/bin/weston --log=${XDG_RUNTIME_DIR}/weston.log --modules=systemd-notify.so
 
 # Optional watchdog setup
